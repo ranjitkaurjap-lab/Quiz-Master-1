@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORLD QUIZ</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:linear-gradient(180deg,#061b4f,#0b3d91);
+    color:white;
+    font-family:Arial,sans-serif;
+    text-align:center;
+}
+
+.card{
+    width:92%;
+    max-width:800px;
+    margin:25px auto;
+    padding:25px;
+    background:#08275f;
+    border:3px solid #ffd43b;
+    border-radius:20px;
+    box-shadow:0 0 25px rgba(0,0,0,.4);
+}
+
+.title{
+    font-size:32px;
+    font-weight:bold;
+    color:#ffd43b;
+    margin-bottom:25px;
+}
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+
+/* ADVERTISEMENT */
+
+.adbox{
+    height:250px;
+    border:3px solid #4c9aff;
+    border-radius:15px;
+    background:#03143b;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    font-size:28px;
+    font-weight:bold;
+    color:#ffd43b;
+}
+
+.adbox span{
+    margin-top:15px;
+    color:white;
+    font-size:18px;
+}
+
+.timer{
+    margin-top:20px;
+    color:#ffd43b;
+    font-size:28px;
+    font-weight:bold;
+}
+
+
+/* LEVELS */
+
+.level-title{
+    font-size:28px;
+    color:#ffd43b;
+    font-weight:bold;
+    margin-bottom:25px;
+}
+
+.level{
+    width:90%;
+    max-width:600px;
+    margin:10px auto;
+    padding:18px;
+
+    border:3px solid #ffd43b;
+    border-radius:15px;
+
+    background:#03143b;
+    color:white;
+
+    font-size:22px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+.level:hover{
+    background:#124d9c;
+}
+
+
+/* QUIZ */
+
+.progress{
+    color:#ffd43b;
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.question{
+    background:#03143b;
+    border:3px solid #4c9aff;
+    border-radius:15px;
+    padding:25px;
+
+    font-size:24px;
+    font-weight:bold;
+
+    margin-bottom:20px;
+}
+
+.option{
+    width:100%;
+    margin:8px 0;
+    padding:15px;
+
+    border:2px solid #4c9aff;
+    border-radius:12px;
+
+    background:#0b326f;
+    color:white;
+
+    font-size:19px;
+    text-align:left;
+
+    cursor:pointer;
+}
+
+.option:hover{
+    background:#1454a0;
+}
+
+.option.correct{
+    background:#167a3d;
+    border-color:#45ff91;
+}
+
+.option.wrong{
+    background:#8b2020;
+    border-color:#ff5555;
+}
+
+.option:disabled{
+    cursor:default;
+}
+
+.next{
+    display:none;
+
+    margin-top:20px;
+    padding:14px 35px;
+
+    border:2px solid #ffd43b;
+    border-radius:12px;
+
+    background:#ffd43b;
+    color:#061b4f;
+
+    font-size:19px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+
+/* RESULT */
+
+.result-title{
+    font-size:34px;
+    color:#ffd43b;
+    font-weight:bold;
+}
+
+.score{
+    font-size:28px;
+    margin:20px;
+}
+
+.result-button{
+    padding:15px 25px;
+    margin:8px;
+
+    border:2px solid #ffd43b;
+    border-radius:12px;
+
+    background:#03143b;
+    color:white;
+
+    font-size:18px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+
+/* ANSWER KEY */
+
+.answer-title{
+    color:#ffd43b;
+    font-size:30px;
+    margin-bottom:20px;
+}
+
+.answer-item{
+    background:#03143b;
+    border:1px solid #4c9aff;
+    border-radius:10px;
+
+    padding:12px;
+    margin:8px 0;
+
+    text-align:left;
+    font-size:17px;
+}
+
+.back{
+    margin-top:20px;
+    padding:14px 30px;
+
+    border:2px solid #ffd43b;
+    border-radius:12px;
+
+    background:#ffd43b;
+    color:#061b4f;
+
+    font-size:18px;
+    font-weight:bold;
+
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="card">
+
+    <div class="title">
+        🌍 WORLD QUIZ
+    </div>
+
+
+    <!-- ONE ADVERTISEMENT SLOT -->
+
+    <div id="adScreen" class="screen active">
+
+        <div class="adbox">
+
+            ADVERTISEMENT
+
+            <span>
+                SLOT 1
+            </span>
+
+        </div>
+
+        <div id="timer" class="timer">
+            50 seconds
+        </div>
+
+    </div>
+
+
+    <!-- LEVEL SELECTION -->
+
+    <div id="levelScreen" class="screen">
+
+        <div class="level-title">
+            SELECT LEVEL
+        </div>
+
+        <button
+            class="level"
+            onclick="startGame('low')">
+
+            🟢 LOW •••
+
+        </button>
+
+        <button
+            class="level"
+            onclick="startGame('medium')">
+
+            🟡 MEDIUM •••
+
+        </button>
+
+        <button
+            class="level"
+            onclick="startGame('high')">
+
+            🔴 HIGH •••
+
+        </button>
+
+    </div>
+
+
+    <!-- QUIZ -->
+
+    <div id="quizScreen" class="screen">
+
+        <div id="progress" class="progress"></div>
+
+        <div id="question" class="question"></div>
+
+        <div id="options"></div>
+
+        <button
+            id="nextButton"
+            class="next"
+            onclick="nextQuestion()">
+
+            NEXT QUESTION →
+
+        </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div id="resultScreen" class="screen">
+
+        <div class="result-title">
+            🏆 QUIZ FINISHED
+        </div>
+
+        <div id="score" class="score"></div>
+
+        <button
+            class="result-button"
+            onclick="showAnswerKey()">
+
+            📋 VIEW ANSWER KEY
+
+        </button>
+
+        <button
+            class="result-button"
+            onclick="showLevels()">
+
+            🔄 PLAY AGAIN
+
+        </button>
+
+    </div>
+
+
+    <!-- ANSWER KEY -->
+
+    <div id="answerScreen" class="screen">
+
+        <div class="answer-title">
+            📋 ANSWER KEY
+        </div>
+
+        <div id="answerList"></div>
+
+        <button
+            class="back"
+            onclick="showLevels()">
+
+            ← BACK TO LEVELS
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* ==================================================
+   LOW — 50 QUESTIONS
+================================================== */
+
+const questions = {
+
+low: [
+
+["What is the capital of France?","Paris","London","Rome","Madrid"],
+["The Great Wall is located in which country?","China","Japan","India","Korea"],
+["What is the capital of Japan?","Tokyo","Kyoto","Osaka","Hiroshima"],
+["Sydney is located in which country?","Australia","Canada","USA","New Zealand"],
+["What is the capital of Italy?","Rome","Milan","Venice","Naples"],
+["The Pyramids of Giza are in which country?","Egypt","Sudan","Morocco","Jordan"],
+["What is the capital of the United Kingdom?","London","Manchester","Liverpool","Birmingham"],
+["The Eiffel Tower is in which country?","France","Italy","Spain","Germany"],
+["What is the capital of Canada?","Ottawa","Toronto","Vancouver","Montreal"],
+["Which country is famous for its boot-shaped map?","Italy","France","Spain","Greece"],
+["What is the capital of Australia?","Canberra","Sydney","Melbourne","Perth"],
+["The Amazon rainforest is mainly located in which country?","Brazil","Argentina","Chile","Peru"],
+["What is the capital of Germany?","Berlin","Munich","Hamburg","Frankfurt"],
+["Mount Fuji is located in which country?","Japan","China","Nepal","South Korea"],
+["What is the capital of Spain?","Madrid","Barcelona","Seville","Valencia"],
+["The Taj Mahal is located in which country?","India","Pakistan","Nepal","Bangladesh"],
+["What is the capital of Brazil?","Brasília","Rio de Janeiro","São Paulo","Salvador"],
+["The Colosseum is located in which country?","Italy","France","Greece","Spain"],
+["What is the capital of South Korea?","Seoul","Busan","Incheon","Daegu"],
+["Dubai is located in which country?","United Arab Emirates","Qatar","Saudi Arabia","Oman"],
+["What is the capital of Russia?","Moscow","St Petersburg","Kazan","Sochi"],
+["The Statue of Liberty is in which country?","United States","Canada","France","United Kingdom"],
+["What is the capital of China?","Beijing","Shanghai","Hong Kong","Guangzhou"],
+["Petra is located in which country?","Jordan","Egypt","Israel","Lebanon"],
+["What is the capital of Greece?","Athens","Thessaloniki","Patras","Rhodes"],
+["The Northern Lights are famously visible in which country?","Norway","Spain","Egypt","Brazil"],
+["What is the capital of Mexico?","Mexico City","Cancún","Guadalajara","Monterrey"],
+["Machu Picchu is located in which country?","Peru","Chile","Bolivia","Ecuador"],
+["What is the capital of Thailand?","Bangkok","Phuket","Chiang Mai","Pattaya"],
+["The Leaning Tower is located in which Italian city?","Pisa","Rome","Milan","Turin"],
+["What is the capital of Argentina?","Buenos Aires","Córdoba","Rosario","Mendoza"],
+["Istanbul is located in which country?","Turkey","Greece","Bulgaria","Georgia"],
+["What is the capital of Portugal?","Lisbon","Porto","Braga","Faro"],
+["The Serengeti is mainly located in which country?","Tanzania","Kenya","Uganda","Rwanda"],
+["What is the capital of Egypt?","Cairo","Alexandria","Giza","Luxor"],
+["The Swiss Alps are located in which country?","Switzerland","Austria","France","Germany"],
+["What is the capital of Norway?","Oslo","Bergen","Trondheim","Stavanger"],
+["Angkor Wat is located in which country?","Cambodia","Thailand","Vietnam","Laos"],
+["What is the capital of New Zealand?","Wellington","Auckland","Christchurch","Hamilton"],
+["The Great Barrier Reef is near which country?","Australia","Indonesia","India","Philippines"],
+["What is the capital of Turkey?","Ankara","Istanbul","Izmir","Bursa"],
+["Christ the Redeemer is in which country?","Brazil","Argentina","Chile","Peru"],
+["What is the capital of Switzerland?","Bern","Zurich","Geneva","Basel"],
+["Which country is famous for its fjords?","Norway","Italy","Mexico","India"],
+["What is the capital of Kenya?","Nairobi","Mombasa","Kisumu","Nakuru"],
+["Amsterdam is the capital of which country?","Netherlands","Belgium","Denmark","Sweden"],
+["What is the capital of the United States?","Washington, D.C.","New York","Boston","Chicago"],
+["The Sahara Desert is located on which continent?","Africa","Asia","Europe","Australia"],
+["What is the capital of Iceland?","Reykjavík","Akureyri","Kópavogur","Hafnarfjörður"],
+["Venice is located in which country?","Italy","France","Spain","Greece"]
+
+],
+
+
+/* ==================================================
+   MEDIUM — 50 QUESTIONS
+================================================== */
+
+medium: [
+
+["Which country has the most islands?","Sweden","Indonesia","Canada","Philippines"],
+["What is the capital of Kazakhstan?","Astana","Almaty","Shymkent","Aktobe"],
+["Lake Bled is located in which country?","Slovenia","Croatia","Austria","Slovakia"],
+["Timbuktu is located in which country?","Mali","Niger","Chad","Sudan"],
+["Which country has the largest land area?","Russia","Canada","China","USA"],
+["What is the capital of Morocco?","Rabat","Casablanca","Marrakesh","Fez"],
+["The forint is the currency of which country?","Hungary","Poland","Romania","Czechia"],
+["What is the capital of Mongolia?","Ulaanbaatar","Erdenet","Darkhan","Khovd"],
+["The Galápagos Islands belong to which country?","Ecuador","Peru","Chile","Colombia"],
+["What is the capital of Vietnam?","Hanoi","Ho Chi Minh City","Da Nang","Hue"],
+["Dubrovnik is located in which country?","Croatia","Montenegro","Serbia","Slovenia"],
+["What is the capital of Ethiopia?","Addis Ababa","Gondar","Dire Dawa","Mekelle"],
+["Which country is known as the Land of a Thousand Lakes?","Finland","Sweden","Norway","Iceland"],
+["What is the capital of Chile?","Santiago","Valparaíso","Concepción","Antofagasta"],
+["The Atacama Desert is mainly in which country?","Chile","Peru","Bolivia","Argentina"],
+["What is the capital of Colombia?","Bogotá","Medellín","Cali","Cartagena"],
+["Mount Kilimanjaro is located in which country?","Tanzania","Kenya","Uganda","Ethiopia"],
+["What is the capital of Austria?","Vienna","Salzburg","Graz","Innsbruck"],
+["Kraków is a city in which country?","Poland","Czechia","Slovakia","Hungary"],
+["What is the capital of Ireland?","Dublin","Cork","Galway","Limerick"],
+["What is the capital of Peru?","Lima","Cusco","Arequipa","Trujillo"],
+["What is the capital of Finland?","Helsinki","Turku","Tampere","Espoo"],
+["The Okavango Delta is in which country?","Botswana","Namibia","Zambia","Zimbabwe"],
+["What is the capital of Czechia?","Prague","Brno","Ostrava","Plzeň"],
+["Chichén Itzá is located in which country?","Mexico","Guatemala","Peru","Belize"],
+["What is the capital of Croatia?","Zagreb","Split","Dubrovnik","Rijeka"],
+["The Danube Delta is mainly in which country?","Romania","Hungary","Bulgaria","Serbia"],
+["What is the capital of Romania?","Bucharest","Cluj-Napoca","Iași","Brașov"],
+["Marrakech is located in which country?","Morocco","Algeria","Tunisia","Egypt"],
+["What is the capital of Ghana?","Accra","Kumasi","Tamale","Cape Coast"],
+["The Drakensberg Mountains are mainly associated with which country?","South Africa","Namibia","Botswana","Zimbabwe"],
+["What is the capital of Nigeria?","Abuja","Lagos","Kano","Ibadan"],
+["Salzburg is a city in which country?","Austria","Germany","Switzerland","Slovenia"],
+["What is the capital of Belgium?","Brussels","Antwerp","Bruges","Ghent"],
+["Bali is an island of which country?","Indonesia","Malaysia","Philippines","Thailand"],
+["What is the capital of the Philippines?","Manila","Cebu","Davao","Quezon City"],
+["Cusco is located in which country?","Peru","Bolivia","Ecuador","Chile"],
+["What is the capital of Ecuador?","Quito","Guayaquil","Cuenca","Loja"],
+["Salar de Uyuni is located in which country?","Bolivia","Chile","Peru","Argentina"],
+["What is the capital of Pakistan?","Islamabad","Karachi","Lahore","Peshawar"],
+["Ephesus is an ancient site in which country?","Turkey","Greece","Italy","Cyprus"],
+["What is the capital of Denmark?","Copenhagen","Aarhus","Odense","Aalborg"],
+["The Faroe Islands are part of which kingdom?","Denmark","Norway","Sweden","Iceland"],
+["What is the capital of Sweden?","Stockholm","Gothenburg","Malmö","Uppsala"],
+["The Dead Sea borders Jordan and which other area?","Israel and the West Bank","Lebanon","Syria","Egypt"],
+["What is the capital of Bulgaria?","Sofia","Varna","Plovdiv","Burgas"],
+["Mount Elbrus is located in which country?","Russia","Georgia","Kazakhstan","Armenia"],
+["What is the capital of Serbia?","Belgrade","Novi Sad","Niš","Kragujevac"],
+["The Blue Lagoon is a famous attraction in which country?","Iceland","Norway","Finland","Sweden"],
+["What is the capital of Slovakia?","Bratislava","Košice","Prešov","Žilina"]
+
+],
+
+
+/* ==================================================
+   HIGH — 50 QUESTIONS
+================================================== */
+
+high: [
+
+["Which country has the world's longest coastline?","Canada","Russia","Indonesia","Australia"],
+["What is the capital of Kyrgyzstan?","Bishkek","Osh","Naryn","Talas"],
+["Which country completely surrounds Lesotho?","South Africa","Botswana","Namibia","Eswatini"],
+["What is the capital of Bhutan?","Thimphu","Paro","Punakha","Phuntsholing"],
+["Cabinda is an exclave of which country?","Angola","Congo","Gabon","Cameroon"],
+["What is the capital of Tajikistan?","Dushanbe","Khujand","Kulob","Istaravshan"],
+["The Kurdistan Region is an autonomous region of which country?","Iraq","Iran","Turkey","Syria"],
+["What is the capital of Turkmenistan?","Ashgabat","Turkmenabat","Mary","Balkanabat"],
+["Which national capital is commonly considered the world's highest?","La Paz","Quito","Thimphu","Bogotá"],
+["What is the capital of Madagascar?","Antananarivo","Toamasina","Antsirabe","Mahajanga"],
+["Samarkand is located in which country?","Uzbekistan","Kazakhstan","Tajikistan","Turkmenistan"],
+["What is the capital of Azerbaijan?","Baku","Ganja","Sumqayit","Sheki"],
+["Transylvania is a historical region of which country?","Romania","Hungary","Serbia","Bulgaria"],
+["What is the capital of Georgia?","Tbilisi","Batumi","Kutaisi","Gori"],
+["The Namib Desert is mainly associated with which country?","Namibia","Botswana","South Africa","Angola"],
+["What is the capital of Namibia?","Windhoek","Swakopmund","Walvis Bay","Rundu"],
+["Which country is often credited with having the most time zones when overseas territories are included?","France","Russia","United States","United Kingdom"],
+["What is the capital of Suriname?","Paramaribo","Albina","Lelydorp","Nieuw Nickerie"],
+["Iran has coastlines on the Caspian Sea and which other major body of water?","Persian Gulf","Red Sea","Black Sea","Arabian Sea"],
+["What is the capital of Guyana?","Georgetown","Linden","New Amsterdam","Bartica"],
+["Lviv is a city in which country?","Ukraine","Poland","Slovakia","Romania"],
+["What is the capital of Moldova?","Chișinău","Bălți","Tiraspol","Cahul"],
+["The Wakhan Corridor is located in which country?","Afghanistan","Pakistan","Tajikistan","China"],
+["What is the capital of Laos?","Vientiane","Luang Prabang","Pakse","Savannakhet"],
+["The Great Barrier Reef is the world's largest what?","Coral reef system","Desert","Island","Canyon"],
+["What is the capital of Papua New Guinea?","Port Moresby","Lae","Madang","Goroka"],
+["Persepolis was an ancient city in which modern country?","Iran","Iraq","Syria","Turkey"],
+["What is the capital of Armenia?","Yerevan","Gyumri","Vanadzor","Hrazdan"],
+["Patagonia is shared mainly by Argentina and which country?","Chile","Peru","Bolivia","Uruguay"],
+["What is the capital of Uruguay?","Montevideo","Salto","Punta del Este","Colonia"],
+["Kaliningrad is an exclave of which country?","Russia","Belarus","Ukraine","Lithuania"],
+["What is the capital of Albania?","Tirana","Durrës","Vlorë","Shkodër"],
+["Damascus is the capital of which country?","Syria","Lebanon","Jordan","Iraq"],
+["What is the capital of Montenegro?","Podgorica","Budva","Kotor","Bar"],
+["Dallol is located in which country?","Ethiopia","Eritrea","Djibouti","Sudan"],
+["What is the capital of Eritrea?","Asmara","Massawa","Keren","Assab"],
+["The Omo Valley is located in which country?","Ethiopia","Kenya","Uganda","Sudan"],
+["What is the capital of Senegal?","Dakar","Saint-Louis","Thiès","Touba"],
+["Lake Titicaca is shared by Peru and which country?","Bolivia","Chile","Ecuador","Argentina"],
+["What is the constitutional capital of Bolivia?","Sucre","La Paz","Santa Cruz","Cochabamba"],
+["Greenland is an autonomous territory within which kingdom?","Denmark","Norway","Iceland","Sweden"],
+["What is the capital of Cyprus?","Nicosia","Limassol","Larnaca","Paphos"],
+["Flanders is a region of which country?","Belgium","Netherlands","France","Germany"],
+["What is the capital of Slovenia?","Ljubljana","Maribor","Koper","Celje"],
+["Socotra is an island belonging to which country?","Yemen","Oman","Somalia","Eritrea"],
+["What is the capital of Oman?","Muscat","Salalah","Sohar","Nizwa"],
+["Galicia is an autonomous community of which country?","Spain","Portugal","France","Italy"],
+["What is the capital of Lithuania?","Vilnius","Kaunas","Klaipėda","Šiauliai"],
+["Which country has more ancient pyramids than Egypt?","Sudan","Libya","Ethiopia","Algeria"],
+["What is the capital of Sudan?","Khartoum","Omdurman","Port Sudan","Kassala"]
+
+]
+
+};
+
+
+/* ==================================================
+   ANSWERS
+================================================== */
+
+const correctAnswers = {
+
+low: [
+"Paris","China","Tokyo","Australia","Rome",
+"Egypt","London","France","Ottawa","Italy",
+"Canberra","Brazil","Berlin","Japan","Madrid",
+"India","Brasília","Italy","Seoul","United Arab Emirates",
+"Moscow","United States","Beijing","Jordan","Athens",
+"Norway","Mexico City","Peru","Bangkok","Pisa",
+"Buenos Aires","Turkey","Lisbon","Tanzania","Cairo",
+"Switzerland","Oslo","Cambodia","Wellington","Australia",
+"Ankara","Brazil","Bern","Norway","Nairobi",
+"Netherlands","Washington, D.C.","Africa","Reykjavík","Italy"
+],
+
+medium: [
+"Sweden","Astana","Slovenia","Mali","Russia",
+"Rabat","Hungary","Ulaanbaatar","Ecuador","Hanoi",
+"Croatia","Addis Ababa","Finland","Santiago","Chile",
+"Bogotá","Tanzania","Vienna","Poland","Dublin",
+"Lima","Helsinki","Botswana","Prague","Mexico",
+"Zagreb","Romania","Bucharest","Morocco","Accra",
+"South Africa","Abuja","Austria","Brussels","Indonesia",
+"Manila","Peru","Quito","Bolivia","Islamabad",
+"Turkey","Copenhagen","Denmark","Stockholm",
+"Israel and the West Bank","Sofia","Russia","Belgrade",
+"Iceland","Bratislava"
+],
+
+high: [
+"Canada","Bishkek","South Africa","Thimphu","Angola",
+"Dushanbe","Iraq","Ashgabat","La Paz","Antananarivo",
+"Uzbekistan","Baku","Romania","Tbilisi","Namibia",
+"Windhoek","France","Paramaribo","Persian Gulf","Georgetown",
+"Ukraine","Chișinău","Afghanistan","Vientiane","Coral reef system",
+"Port Moresby","Iran","Yerevan","Chile","Montevideo",
+"Russia","Tirana","Syria","Podgorica","Ethiopia",
+"Asmara","Ethiopia","Dakar","Bolivia","Sucre",
+"Denmark","Nicosia","Belgium","Ljubljana","Yemen",
+"Muscat","Spain","Vilnius","Sudan","Khartoum"
+]
+
+};
+
+
+/* ==================================================
+   GAME VARIABLES
+================================================== */
+
+let currentLevel = "";
+let currentQuestion = 0;
+let score = 0;
+let selectedQuestions = [];
+
+
+/* ==================================================
+   SCREEN CONTROL
+================================================== */
+
+function showScreen(id){
+
+    document.querySelectorAll(".screen").forEach(function(screen){
+
+        screen.classList.remove("active");
+
+    });
+
+    document.getElementById(id).classList.add("active");
+
+}
+
+
+/* ==================================================
+   EXACT 50 SECOND COUNTDOWN
+================================================== */
+
+function startAdvertisement(){
+
+    let timerNumber = 50;
+
+    const timerElement =
+        document.getElementById("timer");
+
+    timerElement.textContent =
+        "50 seconds";
+
+
+    const countdown =
+        setInterval(function(){
+
+            timerNumber--;
+
+            timerElement.textContent =
+                timerNumber + " seconds";
+
+
+            if(timerNumber <= 0){
+
+                clearInterval(countdown);
+
+                document.getElementById("adScreen")
+                    .classList.remove("active");
+
+                document.getElementById("levelScreen")
+                    .classList.add("active");
+
+            }
+
+        },1000);
+
+}
+
+
+/* ==================================================
+   START GAME
+================================================== */
+
+function startGame(level){
+
+    currentLevel = level;
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    selectedQuestions = questions[level];
+
+    showScreen("quizScreen");
+
+    showQuestion();
+
+}
+
+
+/* ==================================================
+   SHOW QUESTION
+================================================== */
+
+function showQuestion(){
+
+    const q =
+        selectedQuestions[currentQuestion];
+
+
+    document.getElementById("progress").textContent =
+        "Question " +
+        (currentQuestion + 1) +
+        " / 50";
+
+
+    document.getElementById("question").textContent =
+        q[0];
+
+
+    const optionsBox =
+        document.getElementById("options");
+
+
+    optionsBox.innerHTML = "";
+
+
+    document.getElementById("nextButton").style.display =
+        "none";
+
+
+    for(let i = 1; i <= 4; i++){
+
+        const button =
+            document.createElement("button");
+
+
+        button.className =
+            "option";
+
+
+        button.textContent =
+            String.fromCharCode(64 + i) +
+            ". " +
+            q[i];
+
+
+        button.onclick =
+            function(){
+
+                checkAnswer(button,q[i]);
+
+            };
+
+
+        optionsBox.appendChild(button);
+
+    }
+
+}
+
+
+/* ==================================================
+   CHECK ANSWER
+================================================== */
+
+function checkAnswer(button,answer){
+
+    const correct =
+        correctAnswers[currentLevel][currentQuestion];
+
+
+    const buttons =
+        document.querySelectorAll(".option");
+
+
+    buttons.forEach(function(btn){
+
+        btn.disabled = true;
+
+    });
+
+
+    if(answer === correct){
+
+        button.classList.add("correct");
+
+        score++;
+
+    }
+
+    else{
+
+        button.classList.add("wrong");
+
+
+        buttons.forEach(function(btn){
+
+            if(btn.textContent.substring(3) === correct){
+
+                btn.classList.add("correct");
+
+            }
+
+        });
+
+    }
+
+
+    document.getElementById("nextButton").style.display =
+        "inline-block";
+
+}
+
+
+/* ==================================================
+   NEXT QUESTION
+================================================== */
+
+function nextQuestion(){
+
+    currentQuestion++;
+
+
+    if(currentQuestion >= 50){
+
+        finishGame();
+
+    }
+
+    else{
+
+        showQuestion();
+
+    }
+
+}
+
+
+/* ==================================================
+   FINISH GAME
+================================================== */
+
+function finishGame(){
+
+    showScreen("resultScreen");
+
+
+    document.getElementById("score").textContent =
+        "Your Score: " +
+        score +
+        " / 50";
+
+}
+
+
+/* ==================================================
+   ANSWER KEY
+================================================== */
+
+function showAnswerKey(){
+
+    showScreen("answerScreen");
+
+
+    const list =
+        document.getElementById("answerList");
+
+
+    list.innerHTML = "";
+
+
+    for(let i = 0; i < 50; i++){
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "answer-item";
+
+
+        item.innerHTML =
+            "<b>Q" +
+            (i + 1) +
+            ":</b> " +
+            selectedQuestions[i][0] +
+            "<br><b>Answer:</b> " +
+            correctAnswers[currentLevel][i];
+
+
+        list.appendChild(item);
+
+    }
+
+}
+
+
+/* ==================================================
+   BACK TO LEVELS
+================================================== */
+
+function showLevels(){
+
+    showScreen("levelScreen");
+
+}
+
+
+/* ==================================================
+   START
+================================================== */
+
+startAdvertisement();
+
+</script>
+
+</body>
+</html>
